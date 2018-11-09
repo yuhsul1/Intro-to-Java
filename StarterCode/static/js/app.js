@@ -1,44 +1,16 @@
 // from data.js
 var tableData = data;
 
-// YOUR CODE HERE!
-let alldateTime = tableData.map(function(data) {
-    return data.datetime
-})
-let allcity = tableData.map(function(data) {
-    return data.city
-})
-let allstate = tableData.map(function(data) {
-    return data.state
-})
-let allcountry = tableData.map(function(data) {
-    return data.country
-})
-let allshape = tableData.map(function(data) {
-    return data.shape
-})
-let alldurationInMin = tableData.map(function(data) {
-    return data.durationMinutes
-})
-let allcomments = tableData.map(function(data) {
-    return data.comments
-})
+let tbody = d3.select("tbody");
+tableData.forEach((data) => {
+    var row = tbody.append("tr");
+    Object.entries(data).forEach(([key, value]) => {
+        console.log(key, value);
+        var cell = row.append("td");
+        cell.text(value);
+    });
+});
 
-
-
-let table = d3.select("#ufo-table");
-let tbody = table.select("tbody");
-let trow;
-for (var i = 0, limit = alldateTime.length; i<limit ; i++) {
-    trow = tbody.append("tr");
-    trow.append("td").text(alldateTime[i]);
-    trow.append("td").text(allcity[i]);
-    trow.append("td").text(allstate[i]);
-    trow.append("td").text(allcountry[i]);
-    trow.append("td").text(allshape[i]);
-    trow.append("td").text(alldurationInMin[i]);
-    trow.append("td").text(allcomments[i]);
-}
 
 
 let submit = d3.select("#filter-btn");
@@ -50,16 +22,34 @@ submit.on("click", function() {
     d3.event.preventDefault();
   
     // Select the input element and get the raw HTML node
-    var inputElement = d3.select("#datetime");
-  
+    var inputDate = d3.select("#datetime").property("value");
+    var inputCity = d3.select("#city").property("value");
+    var inputState = d3.select("#state").property("value");
+    var inputCountry = d3.select("#country").property("value");
+    var inputShape = d3.select("#shape").property("value");
+
     // Get the value property of the input element
-    var inputValue = inputElement.property("value");
+    //multiple level filter use if(inputvalue) to only filter when inputvalue return true
+
+    var filteredData = tableData
+    console.log(inputDate);
+    if (inputDate){var filteredData = filteredData.filter(function(dates) {
+        return dates.datetime ===inputDate
+    });};
+    if (inputCity){var filteredData = filteredData.filter(function(dates) {
+        return dates.city ===inputCity
+    });};
+    if (inputState){var filteredData = filteredData.filter(function(dates) {
+        return dates.state ===inputState
+    });};
+    if (inputCountry){var filteredData = filteredData.filter(function(dates) {
+        return dates.country ===inputCountry
+    });};
+    if (inputShape){var filteredData = filteredData.filter(function(dates) {
+        return dates.shape ===inputShape
+    });};
   
-    console.log(inputValue);
-    var filteredData = tableData.filter(function(dates) {
-        return dates.datetime ===inputValue
-    });
-  
+    //after cleaning the filteredData, store filtered data information in a variable
     console.log(filteredData);
     let dateTime = filteredData.map(function(data) {
         return data.datetime
@@ -83,6 +73,7 @@ submit.on("click", function() {
         return data.comments
     })
     
+    //build table with information
     let newtable = d3.select("#ufo-table");
     newtable.append("tbody");
     let newtbody = newtable.select("tbody");
